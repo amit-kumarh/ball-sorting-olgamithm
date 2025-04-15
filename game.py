@@ -41,5 +41,11 @@ class BallSorter:
         return neighbors
 
     def heuristic(self):
-        pass
-        
+        score = 0
+
+        for col in self.state:
+            unique_colors = set(col)
+            if unique_colors > 1:
+                score += len(col) + len(unique_colors)
+
+        return score
