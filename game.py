@@ -7,8 +7,11 @@ class Color(Enum):
     YELLOW = 2
     GREEN = 3
     BLUE = 4
-    INDIGO = 5
+    CYAN = 5
     VIOLET = 6
+    PINK = 7
+    MINT = 8
+    GRAY = 9
 
 
 class BallSorter:
@@ -45,10 +48,8 @@ class BallSorter:
         self.state[dest].append(self.state[src].pop())
 
     def done(self):
-        for col in self.state:
-            if len(set(col)) > 1:
-                return False
-        return True
+        good_col = lambda col: (len(set(col)) == 1 and len(col) == self.max_in_col) or (len(col) == 0)
+        return all(good_col(col) for col in self.state)
 
     def get_neighbors(self):
         neighbors = []
@@ -77,6 +78,23 @@ G1 = BallSorter(
         [Color.BLUE, Color.ORANGE, Color.RED, Color.BLUE],
         [Color.ORANGE, Color.ORANGE, Color.RED, Color.BLUE],
         [Color.RED, Color.BLUE, Color.ORANGE, Color.RED],
+        [],
+        [],
+    ],
+    4,
+)
+
+G2 = BallSorter(
+    [
+        [Color.GREEN, Color.MINT, Color.PINK, Color.VIOLET],
+        [Color.GRAY, Color.GRAY, Color.PINK, Color.BLUE],
+        [Color.GREEN, Color.ORANGE, Color.VIOLET, Color.RED],
+        [Color.GRAY, Color.BLUE, Color.CYAN, Color.BLUE],
+        [Color.BLUE, Color.CYAN, Color.MINT, Color.RED],
+        [Color.PINK, Color.RED, Color.ORANGE, Color.CYAN],
+        [Color.CYAN, Color.MINT, Color.ORANGE, Color.RED],
+        [Color.MINT, Color.PINK, Color.GRAY, Color.GREEN],
+        [Color.VIOLET, Color.GREEN, Color.VIOLET, Color.ORANGE],
         [],
         [],
     ],
