@@ -1,4 +1,5 @@
 from enum import Enum
+import random
 
 
 class Color(Enum):
@@ -12,6 +13,16 @@ class Color(Enum):
     PINK = 7
     MINT = 8
     GRAY = 9
+    BLACK = 10
+    WHITE = 11
+    INDIGO = 12
+    FUCHSIA= 13
+    AZURE = 14
+    SAGE = 15
+    CRIMSON = 16
+    CARDINAL = 17
+    MARIGOLD = 18
+    COBALT = 19
 
 
 class BallSorter:
@@ -71,6 +82,37 @@ class BallSorter:
 
         return score
 
+def generate_tube_puzzle(num_tubes: int, balls_per_tube: int) -> BallSorter:
+    if num_tubes < 3:
+        raise ValueError("Number of tubes must be at least 3 to generate a solvable puzzle.")
+
+    # Calculate the number of colors.  We want each color to appear 4 times,
+    # and we need at least one empty tube to make the puzzle solvable.
+    num_colors = num_tubes - 2
+
+    # Ensure we don't try to use more colors than we have defined.
+    if num_colors > len(Color):
+        raise ValueError(f"Not enough colors available.  Cannot generate puzzle with {num_tubes} tubes.")
+
+    # Create a list of all the balls, 4 of each color.
+    balls = []
+    for color_index in range(num_colors):
+        color = Color(color_index)
+        balls.extend([color] * balls_per_tube)
+
+    # Shuffle the balls randomly.
+    random.shuffle(balls)
+
+    # Distribute the balls into the tubes.
+    tubes = [[] for _ in range(num_tubes)]
+    ball_index = 0
+    for tube_index in range(num_tubes - 2):  # Leave the last two tubes empty
+        for _ in range(balls_per_tube):
+            tubes[tube_index].append(balls[ball_index])
+            ball_index += 1
+
+    return BallSorter(tubes, balls_per_tube)
+
 
 ## EXAMPLE GAMES
 G1 = BallSorter(
@@ -100,18 +142,3 @@ G2 = BallSorter(
     ],
     4,
 )
-
-def test_solve():
-    print(G1)
-    G1.move(0, 3)
-    G1.move(1, 3)
-    G1.move(0, 4)
-    G1.move(1, 4)
-    G1.move(2, 4)
-    G1.move(0, 1)
-    G1.move(2, 1)
-    G1.move(0, 3)
-    G1.move(2, 3)
-    G1.move(2, 4)
-    print(G1)
-    print(G1.done())
