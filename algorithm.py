@@ -1,9 +1,5 @@
 import heapq
 import copy
-from game import BallSorter, G1, G2, generate_tube_puzzle
-from collections import namedtuple
-
-
 
 class Node:
     def __init__(self, state, prev_move, parent=None, g=0, h=0):
@@ -26,7 +22,6 @@ def a_star(start_state):
         current_node = heapq.heappop(open_list)
 
         if current_node.state.done():
-            print(current_node.state)
             path = []
             while current_node:
                 path.append(current_node.prev_move)
@@ -49,7 +44,3 @@ def a_star(start_state):
             heapq.heappush(open_list, neighbor_node)
 
     return None  # No path found
-
-game = generate_tube_puzzle(15, 4)
-print(game)
-print(*a_star(game), sep='\n\n')
