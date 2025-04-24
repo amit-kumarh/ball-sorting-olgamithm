@@ -72,15 +72,40 @@ class BallSorter:
                     neighbors.append((si, di))
         return neighbors
 
-    def heuristic(self):
+    def heuristic_1(self, col_weight, color_weight):
+        # Length of unsolved column + number of unique colors 
         score = 0
 
         for col in self.state:
             unique_colors = set(col)
             if len(unique_colors) > 1:
-                score += len(col) + len(unique_colors)
+                score += col_weight*len(col) + color_weight*len(unique_colors)
 
         return score
+    
+    def heuristic_2(self):
+        # For each color, calculate how far (in terms of moves) its balls are from being in one tube
+        score = 0
+
+        for color in colors:
+            for col in self.state:
+                for ball in col:
+                    if ball != color:
+                        score += 1
+
+        return score
+    
+    def heuristic_3(self):
+        # counts number of "misplaced" balls -- balls that don't match bottom ball
+        misplaced = 0
+        for tube in self.state:
+            if not tube:
+                continue
+            first_color = tube[0]
+            for ball in tube:
+                if ball != first_color:
+                    misplaced += 1
+        return misplaced
 
 def generate_tube_puzzle(num_tubes: int, balls_per_tube: int) -> BallSorter:
     if num_tubes < 3:
