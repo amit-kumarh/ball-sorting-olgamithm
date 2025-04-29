@@ -4,6 +4,16 @@ import json
 from algorithm import *
 from game import *
 
+heuristics = [
+    lambda s: s.heuristic_4(col_weight=1, color_weight=1),
+    lambda s: s.heuristic_1(),
+    lambda s: s.heuristic_2(),
+    lambda s: s.heuristic_3(),
+]
+
+names = ["Heuristic 1", "Heuristic 2", "Heuristic 3", "Heuristic 4"]
+
+
 
 def main():
     with open("games.pickle", "rb") as pf:
@@ -15,13 +25,13 @@ def main():
         scores = []
         states = []
         for game in games:
-            print(game)
-            path, num_states = a_star(game)
-            print(len(path), states)
+
+            path, num_states = a_star(game, heuristic)
+            print(f"length of path: {len(path)}, number of states explored: {num_states}")
             states.append(num_states)
             scores.append(len(path))
-        scores_dict[name] = scores
-        states_dict[name] = states
+        scores_dict[name+"scores"] = scores
+        states_dict[name+"states"] = states
 
     with open("results.json", "w") as of:
         json.dump([scores_dict, states_dict], of)

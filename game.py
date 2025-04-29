@@ -71,9 +71,74 @@ class BallSorter:
                 if self.is_valid_move(si, di):
                     neighbors.append((si, di))
         return neighbors
+    
+    def heuristic_1(self):
+        """
+        Heuristic based on number of unique colors in each column.
 
-    def heuristic_1(self, col_weight, color_weight):
-        # Length of unsolved column + number of unique colors 
+        Sums up unique colors in each non-finished column.
+        """
+        unique = 0
+        for tube in self.state:
+            if not tube:
+                continue
+
+            # if a column is complete, no penalty
+            if len(set(tube)) == 1 and len(tube) == self.max_in_col:
+                continue
+
+            # add number of transitions
+            unique += len(set(tube))
+                    
+        return unique
+    
+    def heuristic_2(self):
+        """
+        Heuristic based on misplaced colors.
+
+        Sums up balls that do not match the majority color in each column.
+        """
+        misplaced = 0
+        for tube in self.state:
+            if not tube:
+                continue
+
+            # if all balls are the same, no penalty
+            if len(set(tube)) == 1:
+                continue
+
+            # penalize number of balls that don't match the majority color in the tube
+            color_counts = {}
+            for ball in tube:
+                color_counts[ball] = color_counts.get(ball, 0) + 1
+            majority_count = max(color_counts.values())
+            misplaced += len(tube) - majority_count
+        return misplaced
+
+    def heuristic_3(self):
+        """
+        Heuristic based on transitions.
+
+        Sums up transitions between balls.
+        """
+        transitions = 0
+        for tube in self.state:
+            if not tube:
+                continue
+
+            # if all balls are the same, no penalty
+            if len(set(tube)) == 1:
+                continue
+
+            # add number of transitions
+            for i in range(len(tube)-1):
+                if tube[i] != tube[i+1]:
+                    transitions += 1
+
+        return transitions
+    
+    def heuristic_4(self, col_weight, color_weight):
+            # Length of unsolved column + number of unique colors 
         score = 0
 
         for col in self.state:
@@ -82,30 +147,6 @@ class BallSorter:
                 score += col_weight*len(col) + color_weight*len(unique_colors)
 
         return score
-    
-    def heuristic_2(self):
-        # For each color, calculate how far (in terms of moves) its balls are from being in one tube
-        score = 0
-
-        for color in colors:
-            for col in self.state:
-                for ball in col:
-                    if ball != color:
-                        score += 1
-
-        return score
-    
-    def heuristic_3(self):
-        # counts number of "misplaced" balls -- balls that don't match bottom ball
-        misplaced = 0
-        for tube in self.state:
-            if not tube:
-                continue
-            first_color = tube[0]
-            for ball in tube:
-                if ball != first_color:
-                    misplaced += 1
-        return misplaced
 
 def generate_tube_puzzle(num_tubes: int, balls_per_tube: int) -> BallSorter:
     if num_tubes < 3:
