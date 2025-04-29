@@ -32,7 +32,51 @@ The rules of the game are as follows:
 
 The ball sort puzzle shares some similarities with classic problems like the Tower of Hanoi, requiring careful planning to avoid "locking" balls into unsolvable states.
 
-// INSERT PROOF
+The ball sorting problem is also an NP-Complete problem - we will go over the proof below.
+
+### NP-Complete Proof
+
+We can prove that the ball sorting problem is NP-Complete by proving its membership in both NP (verifiable in polynomial time) and NP-Hard.
+
+**NP**
+Proving this problem is NP is fairly simple - if given a starting position and sequence of moves, we can apply those moves and verify that they the end state is comprised of either monochrome or empty tubes within polynomial time.
+
+**NP Hard**
+Proving NP-Hard is where the bulk of the challenge is. If we can reduce another problem into a ball sorting problem, we can conclude the ball sorting problem is as hard as that problem. We can therefore take the NP-Complete problem of 3-Partition, reduce it to a ball sorting problem, and conclude that the ball sorting problem is NP-Complete.
+
+**3-Partition Problem**
+
+The 3-partition problem is a classic NP-Complete problem.
+
+This problem is trying to answer the question - when given a set of integers with length 3m and a target sum of B, can we divide the set into m subsets of length 3 such that the sum of each subset is equal to B? (There is also an additional constraint that each number in the set must be between B/4 and B/2 - this is known as the restricted variant - it is as hard as the unrestricted variant, but will be convenient for us later!)
+
+**Encoding 3-Partition as BSP**
+
+Given a particular instance of a 3-partition problem, we now need to encode it as a sorting problem.
+
+Let's say we have a problem with set of of numbers $[a_1, a_2, a_3...a_3m+1]$, and a target sum B.
+
+We'll define an accompanying 2-color BSP with 3m+1 tubes, with each tube having a capacity of the target sum B. The first 3m bins contain $a_i$ red balls at the top, and $B-a_i$ (the rest) of the balls being blue. The last bin remains empty. In the simplest case of only 3 numbers, that would look like so [1]:
+
+![](artifacts/proof1.png)
+
+We want to prove that this sorting problem is solvable *if and only if* the accompanying 3-partition problem is also solvable.
+
+**Proof**
+
+If the 3-partition problem is solvable, than we know that $a_i$, $a_j$, $a_k$ add to B. Therefore, if we were to take the top red balls off of each tube and place them into the empty tube, they would fill it precisely, since the tubes all have a capacity B. At this point, we now have 2B blue balls remaining across our other three tubes, so we can consolidate 2B balls into B tubes, leaving us 2 full tubes of blue balls, 1 full tube of red balls, and one mpty tube, which is a solved state! This would scale up to larger puzzles as well - if there were three more red-blue tubes, they'd now have an empty tube to perform the same process over again. That state would look like so [1]:
+
+![](artifacts/proof2.png)
+
+At this point, we have proven that if a 3-partition is solvable, than the accompanying sorting problem is solvable - now we need to prove that that sorting problem is only solvable if the 3-partition is solvable - in other words, there's no way to circumvent the rules and solve the sorting puzzle outside of the 3-partition ruleset/paradigm we have defined for ourseves - for exmaple, we fill one of our tubes by with the balls from only two red tubes.
+
+This is where using the restricted version of the 3-partition comes in handy! By restricting our integer elements to between B/4 and B/2, it ensures that we can only reach our target sum in sets of three - if we only have two elements, and they are both less than half of B, we can't possible reach B. Similarly, if we have 4 elements and they are all over a quarter of B, we will forcibly be higher than B - we must use a set of three elements from our set (or tubes' worth of red balls) to create our target sum.
+
+> You might be thinking - what if I combine red balls from different tubes to circumvent the rules? This would indeed not accurately represent the constraints of 3-partition. However, this proof is being performed on the water sorting problem - a similar problem to ball sorting except for that the units of water cannot be separated once they are neighboring the way the balls can. Source [1] contains additional info for why the BSP and WSP problems have equivalent complexity and can be substituted here.
+
+At this point, we've proven that the ball sorting problem is verifiable in polynomial time, and we've reduced a separate NP-Complete problem to it, so we have now proven that the ball sorting algorithm is also an NP-Complete problem.
+
+
 
 ### Algorithm
 
