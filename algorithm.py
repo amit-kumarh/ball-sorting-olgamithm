@@ -57,13 +57,13 @@ def a_star(start_state, heuristic_fn):
 
     return None  # No path found
 
-# heuristics = [
-#     lambda s: s.heuristic_1(),
-#     lambda s: s.heuristic_2(),
-#     lambda s: s.heuristic_3(),
-#     lambda s: s.heuristic_4(col_weight=1, color_weight=1),
-# ]
+heuristics = [
+    lambda s: s.misplaced_balls(),
+    lambda s: s.heuristic_1(),
+    lambda s: s.transitions(),
+    lambda s: s.heuristic_4(col_weight=1, color_weight=1),
+]
 
-# names = ["Heuristic 1", "Heuristic 2", "Heuristic 3", "Heuristic 4"]
+names = ["Heuristic 1", "Heuristic 2", "Heuristic 3", "Heuristic 4"]
 
 # print(a_star(G1, heuristics[2]))

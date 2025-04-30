@@ -5,13 +5,13 @@ from algorithm import *
 from game import *
 
 heuristics = [
-    lambda s: s.heuristic_4(col_weight=1, color_weight=1),
-    lambda s: s.heuristic_1(),
-    lambda s: s.heuristic_2(),
-    lambda s: s.heuristic_3(),
+    lambda s: s.unique_and_length(col_weight=1, color_weight=1),
+    lambda s: s.misplaced_balls(),
+    # lambda s: s.transitions(),
+    # lambda s: s.heuristic_1(),
 ]
 
-names = ["Heuristic 1", "Heuristic 2", "Heuristic 3", "Heuristic 4"]
+names = ["Unique + Length", "Misplaced Balls", "Transitions", "Heuristic 4"]
 
 
 
@@ -21,23 +21,23 @@ def main():
 
     scores_dict = {}
     states_dict = {}
-    for heuristic, name in zip(heuristics, names):
+    for i, (heuristic, name) in enumerate(zip(heuristics, names)):
         scores = []
         states = []
-        for game in games:
-
+        for j, game in enumerate(games):
             path, num_states = a_star(game, heuristic)
-            print(f"length of path: {len(path)}, number of states explored: {num_states}")
+            print(f"heuristic {i}, game {j}, length of path: {len(path)}, number of states explored: {num_states}")
             states.append(num_states)
             scores.append(len(path))
-        scores_dict[name+"scores"] = scores
-        states_dict[name+"states"] = states
+        scores_dict[name] = scores
+        states_dict[name] = states
 
     with open("results.json", "w") as of:
         json.dump([scores_dict, states_dict], of)
 
 def plot():
     import matplotlib.pyplot as plt
+    import pandas as pd
 
     with open("results.json", "r") as in_f:
         scores_dict, states_dict = json.load(in_f)
@@ -46,12 +46,22 @@ def plot():
     plt.xlabel("Heuristic Function")
     plt.ylabel("States Explored")
     plt.title("Ball Sorter Heuristic Performance")
+    plt.savefig("artifacts/states.png")
     plt.show()
+
+    for k, v in states_dict.items():
+        print(pd.Series(v).describe())
+
+    print('='*50)
+
+    for k, v in scores_dict.items():
+        print(pd.Series(v).describe())
 
     plt.boxplot(scores_dict.values(), tick_labels=list(scores_dict.keys()))
     plt.xlabel("Heuristic Function")
     plt.ylabel("Number of moves to solved")
     plt.title("Ball Sorter Path Length")
+    plt.savefig("artifacts/scores.png")
     plt.show()
 
 if __name__ == "__main__":

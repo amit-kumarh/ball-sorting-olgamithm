@@ -70,7 +70,7 @@ If the 3-partition problem is solvable, than we know that $a_i$, $a_j$, $a_k$ ad
 
 At this point, we have proven that if a 3-partition is solvable, than the accompanying sorting problem is solvable - now we need to prove that that sorting problem is only solvable if the 3-partition is solvable - in other words, there's no way to circumvent the rules and solve the sorting puzzle outside of the 3-partition ruleset/paradigm we have defined for ourseves - for exmaple, we fill one of our tubes by with the balls from only two red tubes.
 
-This is where using the restricted version of the 3-partition comes in handy! By restricting our integer elements to between B/4 and B/2, it ensures that we can only reach our target sum in sets of three - if we only have two elements, and they are both less than half of B, we can't possible reach B. Similarly, if we have 4 elements and they are all over a quarter of B, we will forcibly be higher than B - we must use a set of three elements from our set (or tubes' worth of red balls) to create our target sum.
+This is where using the restricted version of the 3-partition comes in handy! By restricting our integer elements to between B/4 and B/2, it ensures that we can only reach our target sum in sets of three - if we only have two elements, and they are both less than half of B, we can't possible reach B. Similarly, if we have 4 elements and they are all over a quarter of B, the sum will forcibly be higher than B - we must use a set of three elements from our set (or tubes' worth of red balls) to create our target sum.
 
 > You might be thinking - what if I combine red balls from different tubes to circumvent the rules? This would indeed not accurately represent the constraints of 3-partition. However, this proof is being performed on the water sorting problem - a similar problem to ball sorting except for that the units of water cannot be separated once they are neighboring the way the balls can. Source [1] contains additional info for why the BSP and WSP problems have equivalent complexity and can be substituted here.
 
@@ -106,9 +106,38 @@ Additionally, there are a few other elements we had to implement:
 
 // INSERT DIAGRAMS FROM THE SLIDES
 
-## Results
+## Results/Analysis
 
-## Analysis
+From our initial heuristic ideas, we attempted to run them on a control set of games with the following parameters
+
+- Number of Tubes: 10
+- Tube Capacity: 4
+- Number of Games: 20
+
+Out of these, the weighted variant of the misplaced balls, as well as the unique colors per tube were the ones that were successfully able to find solutions for all 20 of the games (note that both of these were combined with an element that penalizes tubes with remaining space in them, so as to be able to differentiate between solved and unsolved states when all tubes are monochrome). The results are plotted below - the first chart plots the number of states that the solver explored when employing that heuristic, and the second is the length of the solve path that was found.
+
+![](artifacts/states.png)
+
+![](artifacts/scores.png)
+
+Along with some descriptive statistics:
+
+**States Explored**
+
+| Statistic | Unique Colors | Misplaced Balls |
+| --------- | ------------- | --------------- |
+| Mean      | 60.45         | 321             |
+| Median    | 54.5          | 213.5           |
+| Std Dev   | 27.49         | 269.61          |
+
+**Path Length**
+| Statistic | Unique Colors | Misplaced Balls |
+| --------- | ------------- | --------------- |
+| Mean      | 34.65         | 33.75           |
+| Median    | 34.5          | 34              |
+| Std Dev   | 2.41          | 2.75            |
+
+Both of these heuristics performed relatively well, however the unique colors comes out on top here - it was able to achieve nearly the same performance in terms of path length (median of ~34), but by exploring only about a quarter of the number of states that the misplaced balls heuristic needed to. It was also much more consistent, with a standard deviation of about half of it's median states explored, compared to nearly 120% for the misplaced balls.
 
 ## Next Steps
 

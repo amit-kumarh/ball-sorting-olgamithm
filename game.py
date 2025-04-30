@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import collections
 
 
 class Color(Enum):
@@ -72,7 +73,7 @@ class BallSorter:
                     neighbors.append((si, di))
         return neighbors
     
-    def heuristic_1(self):
+    def unique_colors(self):
         """
         Heuristic based on number of unique colors in each column.
 
@@ -92,59 +93,69 @@ class BallSorter:
                     
         return unique
     
-    def heuristic_2(self):
+    def misplaced_balls(self):
         """
         Heuristic based on misplaced colors.
 
         Sums up balls that do not match the majority color in each column.
         """
-        misplaced = 0
+        heuristic = 0
         for tube in self.state:
             if not tube:
                 continue
+
+            if len(tube) < self.max_in_col:
+                heuristic += 1
 
             # if all balls are the same, no penalty
             if len(set(tube)) == 1:
                 continue
 
             # penalize number of balls that don't match the majority color in the tube
-            color_counts = {}
-            for ball in tube:
-                color_counts[ball] = color_counts.get(ball, 0) + 1
-            majority_count = max(color_counts.values())
-            misplaced += len(tube) - majority_count
-        return misplaced
+            most_frequent = collections.Counter(tube).most_common(1)[0][0]
+            for cost, ball in zip(range(4,0,-1), tube):
+                if ball != most_frequent:
+                    heuristic += cost
 
-    def heuristic_3(self):
+        return heuristic
+
+    def transitions(self):
         """
         Heuristic based on transitions.
 
         Sums up transitions between balls.
         """
-        transitions = 0
+        heuristic = 0
         for tube in self.state:
             if not tube:
                 continue
 
             # if all balls are the same, no penalty
             if len(set(tube)) == 1:
+                if len(tube) < self.max_in_col:
+                    heuristic += 1
                 continue
 
             # add number of transitions
             for i in range(len(tube)-1):
                 if tube[i] != tube[i+1]:
-                    transitions += 1
+                    heuristic += 1
 
-        return transitions
-    
-    def heuristic_4(self, col_weight, color_weight):
-            # Length of unsolved column + number of unique colors 
+        return heuristic
+
+    def unique_and_length(self, col_weight, color_weight):
+        # Length of unsolved column + number of unique colors 
         score = 0
 
         for col in self.state:
+            if not col:
+                continue
+
             unique_colors = set(col)
-            if len(unique_colors) > 1:
+            if len(unique_colors) != 1:
                 score += col_weight*len(col) + color_weight*len(unique_colors)
+            elif len(col) < self.max_in_col:
+                score += 1
 
         return score
 
