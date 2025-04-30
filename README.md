@@ -22,7 +22,7 @@ This project has 4 Python files that break down as follows:
 
 ## Background
 
-The Ball Sort Puzzle is a type of logic game popularized in smartphone apps. It involves a number of bins filled with colored balls, and the objective is to rearrange the balls so that each bin contains balls of only one color or is left empty.
+The Ball Sort Puzzle is a type of logic game popularized in smartphone apps. [1] It involves a number of bins filled with colored balls, and the objective is to rearrange the balls so that each bin contains balls of only one color or is left empty.
 
 ![](artifacts/ball_sort.png)
 
@@ -64,7 +64,7 @@ Given a particular instance of a 3-partition problem, we now need to encode it a
 
 Let's say we have a problem with set of of numbers $[a_1, a_2, a_3...a_3m+1]$, and a target sum B.
 
-We'll define an accompanying 2-color BSP with 3m+1 tubes, with each tube having a capacity of the target sum B. The first 3m bins contain $a_i$ red balls at the top, and $B-a_i$ (the rest) of the balls being blue. The last bin remains empty. In the simplest case of only 3 numbers, that would look like so [1]:
+We'll define an accompanying 2-color BSP with 3m+1 tubes, with each tube having a capacity of the target sum B. The first 3m bins contain $a_i$ red balls at the top, and $B-a_i$ (the rest) of the balls being blue. The last bin remains empty. In the simplest case of only 3 numbers, that would look like so [2]:
 
 ![](artifacts/proof1.png)
 
@@ -72,7 +72,7 @@ We want to prove that this sorting problem is solvable _if and only if_ the acco
 
 **Proof**
 
-If the 3-partition problem is solvable, than we know that $a_i$, $a_j$, $a_k$ add to B. Therefore, if we were to take the top red balls off of each tube and place them into the empty tube, they would fill it precisely, since the tubes all have a capacity B. At this point, we now have 2B blue balls remaining across our other three tubes, so we can consolidate 2B balls into B tubes, leaving us 2 full tubes of blue balls, 1 full tube of red balls, and one empty tube, which is a solved state! This would scale up to larger puzzles as well - if there were three more red-blue tubes, they'd now have an empty tube to perform the same process over again. That state would look like so [1]:
+If the 3-partition problem is solvable, than we know that $a_i$, $a_j$, $a_k$ add to B. Therefore, if we were to take the top red balls off of each tube and place them into the empty tube, they would fill it precisely, since the tubes all have a capacity B. At this point, we now have 2B blue balls remaining across our other three tubes, so we can consolidate 2B balls into B tubes, leaving us 2 full tubes of blue balls, 1 full tube of red balls, and one empty tube, which is a solved state! This would scale up to larger puzzles as well - if there were three more red-blue tubes, they'd now have an empty tube to perform the same process over again. That state would look like so [2]:
 
 ![](artifacts/proof2.png)
 
@@ -80,7 +80,7 @@ At this point, we have proven that if a 3-partition is solvable, than the accomp
 
 This is where using the restricted version of the 3-partition comes in handy! By restricting our integer elements to between B/4 and B/2, it ensures that we can only reach our target sum in sets of three - if we only have two elements, and they are both less than half of B, we can't possible reach B. Similarly, if we have 4 elements and they are all over a quarter of B, the sum will forcibly be higher than B - we must use a set of three elements from our set (or tubes' worth of red balls) to create our target sum.
 
-> You might be thinking - what if I combine red balls from different tubes to circumvent the rules? This would indeed not accurately represent the constraints of 3-partition. However, this proof is being performed on the water sorting problem - a similar problem to ball sorting except for that the units of water cannot be separated once they are neighboring the way the balls can. Source [1] contains additional info for why the BSP and WSP problems have equivalent complexity and can be substituted here.
+> You might be thinking - what if I combine red balls from different tubes to circumvent the rules? This would indeed not accurately represent the constraints of 3-partition. However, this proof is being performed on the water sorting problem - a similar problem to ball sorting except for that the units of water cannot be separated once they are neighboring the way the balls can. Source [2] contains additional info for why the BSP and WSP problems have equivalent complexity and can be substituted here.
 
 At this point, we've proven that the ball sorting problem is verifiable in polynomial time, and we've reduced a separate NP-Complete problem to it, so we have now proven that the ball sorting algorithm is also an NP-Complete problem.
 
@@ -91,7 +91,7 @@ Our solver uses the A* algorithm to find the optimal sequence of moves— that i
 - The cost so far (the number of moves made) and
 - A heuristic estimate (an estimate of how many additional moves may be needed to reach the solved state).
 
-Unlike simpler search methods like Dijkstra's algorithm, which only considers the cost to _reach_ a given path (which in this case is equal to the depth!), the addition of a heuristic allows A* to prioritizes both paths that are cheap to take *and\* are likelier to converge on a solution quicker.
+Unlike simpler search methods like Dijkstra's algorithm, which only considers the cost to _reach_ a given path (which in this case is equal to the depth!), the addition of a heuristic allows A* to prioritizes both paths that are cheap to take *and\* are likelier to converge on a solution quicker. [3]
 
 ## Application to Ball Sorting
 
@@ -213,5 +213,18 @@ This initial exploration showed a lot of promise, and there are certainly avenue
 3. Water Sorting? The ball sorting puzzle is one of two popular variants of this genre of puzzle, the other being the water sorting puzzle, which has the key difference that when one unit of water (vs a ball) is poured onto another of the same color, they join and become a 2 (or more) tall unit that must move as one. It'd be interesting to see how well our algorithm handles water sorting as opposed to ball sorting.
 
 ## Citations
+[1] Google Play: ball sort puzzle. https://play.google.com/store/search?q=ball%20sort%20puzzle
 
-[1] T. Ito, “Sorting Balls and Water: Equivalence and Computational Complexity,” Feb. 19, 2022.
+[2] T. Ito, “Sorting Balls and Water: Equivalence and Computational Complexity,” Feb. 19, 2022.
+
+[3] K. Ping and L. Shuai, "A brief introduction of an improved A* search algorithm," 2013 10th International Computer Conference on Wavelet Active Media Technology and Information Processing (ICCWAMTIP), Chengdu, China, 2013, pp. 146-148, doi: 10.1109/ICCWAMTIP.2013.6716619.
+
+[4] W. B. Zulfikar, M. Irfan, R. M. Yahya, D. R. Ramdania and Jumadi, "The Comparison of Steepest Ascent Hill Climbing and A-star for Classic Game," 2021 7th International Conference on Wireless and Telematics (ICWT), Bandung, Indonesia, 2021, pp. 1-5, doi: 10.1109/ICWT52862.2021.9678428.
+
+[5] E. R. Firmansyah, S. U. Masruroh and F. Fahrianto, "Comparative Analysis of A* and Basic Theta* Algorithm in Android-Based Pathfinding Games," 2016 6th International Conference on Information and Communication Technology for The Muslim World (ICT4M), Jakarta, Indonesia, 2016, pp. 275-280, doi: 10.1109/ICT4M.2016.063.
+
+
+
+
+
+
