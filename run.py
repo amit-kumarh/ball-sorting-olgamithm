@@ -16,6 +16,9 @@ names = ["Unique + Length", "Misplaced Balls", "Transitions", "Heuristic 4"]
 
 
 def main():
+    """
+    Runs A* search on a set of pre-generated ball sorting games using multiple heuristics.
+    """
     with open("games.pickle", "rb") as pf:
        games = pickle.load(pf)
 
@@ -36,6 +39,9 @@ def main():
         json.dump([scores_dict, states_dict], of)
 
 def plot():
+    """
+    Plots and summarizes the performance of each heuristic function.
+    """
     import matplotlib.pyplot as plt
     import pandas as pd
 

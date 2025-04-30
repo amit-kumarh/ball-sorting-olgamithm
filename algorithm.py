@@ -4,15 +4,18 @@ from game import G1, G2
 
 class Node:
     """
-    Representation of a game state in the A* graph.
+    Represents a node in the A* search graph for the ball sorting puzzle.
 
     Attributes:
-        state: An instance of BallSorter representing the current state of the game.
-        parent: An instance of BallSorter representing the previous state of the game in the sequence of moves.
-        prev_move: A tuple representing the move made to go from the parent node to the current node.
+        state (BallSorter): The current game state.
+        parent (Node): The parent node representing the previous game state.
+        prev_move (tuple): The move that led from the parent state to the current state.
+        g (int): The cost from the start node to this node (number of moves so far).
+        h (int): The heuristic estimate of the remaining cost to reach the goal.
+        f (int): The total estimated cost (f = g + h).
     """
     def __init__(self, state, prev_move, parent=None, g=0, h=0):
-        self.state = state # instance of BallSorter
+        self.state = state
         self.parent = parent
         self.prev_move = prev_move
         self.g = g  # Cost so far
@@ -23,14 +26,25 @@ class Node:
         return self.f < other.f
 
 def a_star(start_state, heuristic_fn):
+    """
+    Performs A* search to solve the ball sorting puzzle.
+
+    Args:
+        start_state (BallSorter): The initial state of the game.
+        heuristic_fn (function): A function that takes a game state and returns an estimated cost to the goal.
+
+    Returns:
+        tuple[list[tuple], int]: A tuple containing:
+            - A list of moves (as tuples) representing the shortest path to the goal state.
+            - The number of explored states.
+        Returns None if no solution is found.
+    """
     open_list = []
     heapq.heappush(open_list, Node(start_state, None, parent=None, g=0, h=heuristic_fn(start_state)))
     closed_set = set()
 
     while open_list:
         current_node = heapq.heappop(open_list)
-        # print(heuristic_fn(current_node.state))
-        # print(current_node.state)
 
         if current_node.state.done():
             print(current_node.state)
@@ -57,13 +71,3 @@ def a_star(start_state, heuristic_fn):
 
     return None  # No path found
 
-heuristics = [
-    lambda s: s.misplaced_balls(),
-    lambda s: s.heuristic_1(),
-    lambda s: s.transitions(),
-    lambda s: s.heuristic_4(col_weight=1, color_weight=1),
-]
-
-names = ["Heuristic 1", "Heuristic 2", "Heuristic 3", "Heuristic 4"]
-
-# print(a_star(G1, heuristics[2]))

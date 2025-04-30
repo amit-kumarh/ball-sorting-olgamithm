@@ -27,6 +27,15 @@ class Color(Enum):
 
 
 class BallSorter:
+    """
+    Represents a ball sort puzzle game state.
+
+    Attributes:
+        num_cols (int): The number of columns in the game.
+        max_in_col (int): The maximum number of balls that each column can hold
+        state (List[List[Color]]): The game state, where each list represents a 
+            column containing `Color` objects.
+    """
     def __init__(self, initial_config, max_in_col) -> None:
         self.num_cols = len(initial_config)
         self.max_in_col = max_in_col
@@ -44,7 +53,16 @@ class BallSorter:
         return out
 
     def is_valid_move(self, src, dest):
-        # check top of src matches top of dest
+        """
+        Checks if moving the top ball from the source column to the destination column is valid.
+
+        Args:
+            src (int): Index of the source column.
+            dest (int): Index of the destination column.
+
+        Returns:
+            bool: True if the move is valid, False otherwise.
+        """
         if (
             len(self.state[src]) > 0
             and (
@@ -57,13 +75,22 @@ class BallSorter:
         return False
 
     def move(self, src, dest):
+        """
+        Moves the top ball from the source column to the destination column.
+        """
         self.state[dest].append(self.state[src].pop())
 
     def done(self):
+        """
+        Checks whether the puzzle is solved.
+        """
         good_col = lambda col: (len(set(col)) == 1 and len(col) == self.max_in_col) or (len(col) == 0)
         return all(good_col(col) for col in self.state)
 
     def get_neighbors(self):
+        """
+        Generates all valid moves from the current state.
+        """
         neighbors = []
         for si, _ in enumerate(self.state):
             for di, _ in enumerate(self.state):
@@ -75,9 +102,8 @@ class BallSorter:
     
     def unique_colors(self):
         """
-        Heuristic based on number of unique colors in each column.
-
-        Sums up unique colors in each non-finished column.
+        Heuristic based on the number of unique colors in each column.
+        For each incomplete or mixed column, adds the number of unique colors as penalty
         """
         unique = 0
         for tube in self.state:
@@ -95,9 +121,9 @@ class BallSorter:
     
     def misplaced_balls(self):
         """
-        Heuristic based on misplaced colors.
-
-        Sums up balls that do not match the majority color in each column.
+        Heuristic that penalizes misplaced balls in each column.
+        For each column, adds a penalty for balls that do not match the most frequent color.
+        Also adds a small penalty if the column is not full.
         """
         heuristic = 0
         for tube in self.state:
@@ -121,9 +147,9 @@ class BallSorter:
 
     def transitions(self):
         """
-        Heuristic based on transitions.
-
-        Sums up transitions between balls.
+        Heuristic that penalizes color transitions between adjacent balls in each column.
+        Adds 1 point for each transition where two adjacent balls are different.
+        Also adds a small penalty for incomplete uniform columns.
         """
         heuristic = 0
         for tube in self.state:
@@ -144,7 +170,14 @@ class BallSorter:
         return heuristic
 
     def unique_and_length(self, col_weight, color_weight):
-        # Length of unsolved column + number of unique colors 
+        """
+        Weighted heuristic combining column length and color diversity.
+
+        For each non-uniform column, adds:
+            - (col_weight * number of balls), and
+            - (color_weight * number of unique colors).
+        Adds a small penalty for incomplete uniform columns.
+        """
         score = 0
 
         for col in self.state:
@@ -160,6 +193,17 @@ class BallSorter:
         return score
 
 def generate_tube_puzzle(num_tubes: int, balls_per_tube: int) -> BallSorter:
+    """
+    Generates a randomized, solvable ball sort puzzle.
+
+    Args:
+        num_tubes (int): Total number of tubes in the puzzle.
+        balls_per_tube (int): Number of balls each tube can hold. Each color will appear this many times.
+
+    Returns:
+        BallSorter: An initialized BallSorter instance with the generated puzzle state.
+    """
+    
     if num_tubes < 3:
         raise ValueError("Number of tubes must be at least 3 to generate a solvable puzzle.")
 
