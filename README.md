@@ -56,7 +56,7 @@ Proving NP-Hard is where the bulk of the challenge is. If we can reduce another 
 
 The 3-partition problem is a classic NP-Complete problem.
 
-This problem is trying to answer the question - when given a set of integers with length 3m and a target sum of B, can we divide the set into m subsets of length 3 such that the sum of each subset is equal to B? (There is also an additional constraint that each number in the set must be between B/4 and B/2 - this is known as the restricted variant - it is as hard as the unrestricted variant, but will be convenient for us later!)
+This problem is trying to answer the question - when given a set of integers with length 3m and a target sum of B, can we divide the set into m subsets of length 3 such that the sum of each subset is equal to B? (There is also an additional constraint that each number in the set must be between B/4 and B/2. This is known as the restricted variant - it is as hard as the unrestricted variant, but will be convenient for us later!)
 
 **Encoding 3-Partition as BSP**
 
@@ -206,7 +206,7 @@ Our results indicate that while there is a clear performance drop-off outside th
 
 This initial exploration showed a lot of promise, and there are certainly avenues for improvement we are excited about.
 
-1. Heuristic Design - One of the things we realized over the course of the course of this project was that it was very difficult to intuitively compare different heuristics to each other and predict which one was better without implementing and testing it, which was an expensive process both computationally, and in terms of implementation time. As a result, this limited the number and variety of heuristics we were able to try, and ultimately we feel there's still lots of available exploration in this space to improve the algorithm performance.
+1. Heuristic Design - One of the things we realized over the course of the course of this project was that it was very difficult to intuitively compare different heuristics to each other and predict which one was better without implementing and testing it, which was an expensive process both computationally as well as in implementation time. As a result, this limited the number and variety of heuristics we were able to try, and ultimately we feel there's still lots of available exploration in this space to improve the algorithm performance.
 
 2. Algorithm Efficiency - When we wrote the algorithm, we optimized for factors like readability, development time, and reliability, as we wanted to minimize the number of code/implementation hurdles we ran into in order to focus on our more conceptual learning goals. However, this trade-off was made primarily at the cost of efficiency - our algorithm runs quite slowly relative to the number of states it is exploring, which limited the number and complexity of the puzzles we were able to test. With more time, we believe there's plenty of opportunity to optimize our data structures and our algorithm implementation to tackle more complex variants of this puzzle.
 

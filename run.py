@@ -71,6 +71,10 @@ def plot():
     plt.show()
 
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: run.py {run|plot}\n\nPypy is recommended with run mode to increase performance")
+        sys.exit(1)
+
     if sys.argv[1] == "run":
         main()
     elif sys.argv[1] == "plot":
